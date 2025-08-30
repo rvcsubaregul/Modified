@@ -24,3 +24,4 @@ sox==1.4.1
 noisereduce
 spaces
 matplotlib-inline
+bs4

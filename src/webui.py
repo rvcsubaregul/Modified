@@ -33,6 +33,45 @@ mdxnet_models_dir = os.path.join(BASE_DIR, 'mdxnet_models')
 rvc_models_dir = os.path.join(BASE_DIR, 'rvc_models')
 output_dir = os.path.join(BASE_DIR, 'song_output')
 
+from bs4 import BeautifulSoup
+import urllib.parse
+
+def fetch_models_data(name):
+    if not name:
+        return []
+    query = urllib.parse.quote(name)
+    url = f"https://easyaivoice.com/app?search={query}"
+    req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+    with urllib.request.urlopen(req) as response:
+        html = response.read().decode('utf-8')
+    soup = BeautifulSoup(html, 'html.parser')
+    tables = [str(table) for table in soup.find_all('table')]
+    return tables
+
+def search_models(name, progress=gr.Progress()):
+    if not name: 
+        return [], "Please provide a name."
+    progress(0, desc=f'Searching for {name}...')
+    tables = fetch_models_data(name)
+    if len(tables) == 0:
+        return [], f"No results found for {name}."
+    model_options = []
+    for table in tables:
+        for row in BeautifulSoup(table, "html.parser").select("tr"):
+            all_a = row.find_all("a")
+            if len(all_a) < 3:
+                continue
+            name_tag = all_a[0]
+            url_tag = all_a[1]
+            if url_tag.text.strip() != "Run" or not name_tag:
+                continue
+            href = url_tag["href"]
+            url = href.replace("https://easyaivoice.com/run?url=", "").split("&pitch=")[0]
+            url = urllib.parse.unquote(url)
+            if "huggingface" in url.lower():
+                model_options.append([name_tag.text.strip(), url])
+    num = len(model_options)
+    return model_options, f"Found {num} results for {name}." if num > 0 else f"No HuggingFace models found for {name}."
 
 def get_current_models(models_dir):
     models_list = os.listdir(models_dir)
@@ -359,6 +398,30 @@ if __name__ == '__main__':
                 search_query.change(filter_models, inputs=[filter_tags, search_query], outputs=public_models_table)
                 filter_tags.change(filter_models, inputs=[filter_tags, search_query], outputs=public_models_table)
                 download_pub_btn.click(download_online_model, inputs=[pub_zip_link, pub_model_name], outputs=pub_dl_output_message)
+
+            with gr.Tab('From Search'):
+
+                gr.Markdown('## Search for models on EasyAIVoice')
+
+                search_name = gr.Text(label='Model name to search')
+
+                search_btn = gr.Button('Search 🔍', variant='primary')
+
+                search_message = gr.Text(label='Search Message', interactive=False)
+
+                search_models_table = gr.DataFrame(value=[], headers=['Model Name', 'URL'], label='Search Results', interactive=False)
+
+                with gr.Row():
+                    search_zip_link = gr.Text(label='Download link to model')
+                    search_model_name = gr.Text(label='Model name')
+
+                with gr.Row():
+                    search_download_btn = gr.Button('Download 🌐', variant='primary', scale=19)
+                    search_dl_output_message = gr.Text(label='Output Message', interactive=False, scale=20)
+
+                search_btn.click(search_models, inputs=search_name, outputs=[search_models_table, search_message])
+                search_models_table.select(pub_dl_autofill, inputs=[search_models_table], outputs=[search_zip_link, search_model_name])
+                search_download_btn.click(download_online_model, inputs=[search_zip_link, search_model_name], outputs=search_dl_output_message)
 
         # Upload tab
         with gr.Tab('Upload model'):
