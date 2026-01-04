@@ -18,7 +18,7 @@ Built with ❤️ for music enthusiasts and creators, it allows you to transform
 
 | Description | Link |  
 | ----------- | ---- |  
-| 📙 Colab Notebook | [![Open In Colab]([https://colab.research.google.com/assets/colab-badge.svg](https://www.polybuzz.ai/es/character/profile/alya-kujou-8qqGJ))](https://colab.research.google.com/github/R3gm/AICoverGen/blob/main/colab_notebook.ipynb) |  
+| 📙 Colab Notebook | [![Open In Colab]((https://www.polybuzz.ai/es/character/profile/alya-kujou-8qqGJ))](https://colab.research.google.com/drive/1tYVHS7t-KTL92wF-L4zsDwYZMu-eEAxZ?authuser=2) |  
 | 🎉 Repository | [![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-black?style=flat-square&logo=github)](https://github.com/R3gm/AICoverGen) |  
 | 🚀 Online DEMO | [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/r3gm/AICoverGen) |  
 
@@ -57,4 +57,5 @@ Built with ❤️ for music enthusiasts and creators, it allows you to transform
 | **Generate & Download**   | Create your AI cover and download the result as an audio file.               |
 
 👉 This is just a fork of [SociallyIneptWeeb/AICoverGen](https://github.com/SociallyIneptWeeb/AICoverGen), playing around with some changes and improvements.
+
 
