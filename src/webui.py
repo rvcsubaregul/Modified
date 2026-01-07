@@ -190,7 +190,7 @@ if __name__ == '__main__':
     parser.add_argument("--listen", action="store_true", default=False, help="Make the WebUI reachable from your local network.")
     parser.add_argument('--listen-host', type=str, help='The hostname that the server will use.')
     parser.add_argument('--listen-port', type=int, help='The listening port that the server will use.')
-    parser.add_argument('--theme', type=str, default="NoCrypt/miku", help='Set the theme (default: NoCrypt/miku)')
+    parser.add_argument('--theme', type=str, default="freddyaboulton/dracula_revamped", help='Set the theme (default: freddyaboulton/dracula_revamped)')
     parser.add_argument("--ssr", action="store_true", help="Enable SSR (Server-Side Rendering)")
     args = parser.parse_args()
 
@@ -198,7 +198,7 @@ if __name__ == '__main__':
     with open(os.path.join(rvc_models_dir, 'public_models.json'), encoding='utf8') as infile:
         public_models = json.load(infile)
 
-    with gr.Blocks(title='AICoverGenWebUI', theme=args.theme, fill_width=True, fill_height=False) as app:
+    with gr.Blocks(title='AICoverGenWebUI', theme=gr.themes.Soft(primary_hue="emerald", secondary_hue="neutral", radius_size="sm"), fill_width=True, fill_height=False) as app:
 
         gr.Label(f'AICoverGen WebUI {"ZeroGPU mode" if IS_ZERO_GPU else ""} created with ❤️', show_label=False)
         if IS_ZERO_GPU:
@@ -242,7 +242,7 @@ if __name__ == '__main__':
                         song_input_file.upload(process_file_upload, inputs=[song_input_file], outputs=[local_file, song_input])
 
                     with gr.Column():
-                        pitch = gr.Slider(-24, 24, value=0, step=1, label='Pitch Change (Vocals ONLY)', info='Adjust in SEMITONES. ±12 = 1 octave.')
+                        pitch = gr.Slider(-12, 12, value=0, step=1, label='Pitch Change (Vocals ONLY)', info='Adjust in SEMITONES. ±12 = 1 octave.')
                         pitch_all = gr.Slider(-12, 12, value=0, step=1, label='Overall Pitch Change', info='Changes pitch/key of vocals and instrumentals together. Altering this slightly reduces sound quality. (Semitones)')
                     show_file_upload_button.click(swap_visibility, outputs=[file_upload_col, yt_link_col, song_input, local_file])
                     show_yt_link_button.click(swap_visibility, outputs=[yt_link_col, file_upload_col, song_input, local_file])
