@@ -216,6 +216,14 @@ def yt_download_universal(link):
         raise gr.Error(f"❌ Download failed: {str(e)}")
 
 if __name__ == '__main__':
+    import sys
+    
+    # Filtrar argumentos no reconocidos de Google Colab
+    valid_args = []
+    for arg in sys.argv[1:]:
+        if arg.startswith('--') or arg in ['--share', '--builtin-player', '--listen', '--ssr']:
+            valid_args.append(arg)
+    
     parser = ArgumentParser(description='Generate a AI cover song in the song_output/id directory.', add_help=True)
     parser.add_argument("--share", action="store_true", dest="share_enabled", default=False, help="Enable sharing")
     parser.add_argument("--builtin-player", action="store_true", default=False, help="Use the builtin audio player")
@@ -224,7 +232,9 @@ if __name__ == '__main__':
     parser.add_argument('--listen-port', type=int, help='The listening port that the server will use.')
     parser.add_argument('--theme', type=str, default="freddyaboulton/dracula_revamped", help='Set the theme')
     parser.add_argument("--ssr", action="store_true", help="Enable SSR (Server-Side Rendering)")
-    args = parser.parse_args()
+    
+    # Usar solo argumentos válidos
+    args = parser.parse_args(valid_args)
 
     voice_models = get_current_models(rvc_models_dir)
     with open(os.path.join(rvc_models_dir, 'public_models.json'), encoding='utf8') as infile:
@@ -385,11 +395,11 @@ if __name__ == '__main__':
             # ... (igual que tu código original)
             pass  # (por brevedad)
 
-    app.launch(
-        share=args.share_enabled,
-        debug=args.share_enabled,
-        show_error=True,
-        server_name=None if not args.listen else (args.listen_host or '0.0.0.0'),
-        server_port=args.listen_port,
-        ssr_mode=args.ssr
-    )
+app.launch(
+    share=True,  # Siempre compartir en Colab
+    debug=False,  # Desactivar debug en Colab
+    show_error=True,
+    server_port=7860,  # Puerto estándar
+    # Eliminar ssr_mode si causa problemas
+    # ssr_mode=args.ssr  # Comentado para compatibilidad con Colab
+)
